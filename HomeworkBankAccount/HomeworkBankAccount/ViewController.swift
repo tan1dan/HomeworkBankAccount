@@ -72,9 +72,7 @@ class ViewController: UIViewController {
 //        thread.start()
         DispatchQueue.concurrentPerform(iterations: 10) { i in
             account.deposit(amount: 100)
-            account.withdraw(amount: 120)
-            account.deposit(amount: 300)
-            account.withdraw(amount: 120)
+            account.withdraw(amount: 100)
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
