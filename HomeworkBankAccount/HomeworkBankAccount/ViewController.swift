@@ -15,14 +15,14 @@ class ViewController: UIViewController {
         let serialQueue = DispatchSerialQueue(label: "serial")
         
         func deposit(amount: Double){
-            serialQueue.sync {
+            serialQueue.async{
                 self.balance += amount
                 print("Пополнение счета на сумму: \(amount). Баланс \(self.name): \(self.balance)")
             }
         }
         
         func withdraw(amount: Double){
-            serialQueue.sync {
+            serialQueue.async {
                 if self.balance >= amount {
                     self.balance -= amount
                     print("На счету \(self.name) осталось: \(self.balance)")
