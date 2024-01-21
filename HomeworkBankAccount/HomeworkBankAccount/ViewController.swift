@@ -12,22 +12,23 @@ class ViewController: UIViewController {
     class BankAccount {
         var balance: Double = 0
         let name: String
+        let serialQueue = DispatchSerialQueue(label: "serial")
         
         func deposit(amount: Double){
-            DispatchQueue.global().sync {
-                balance += amount
-                print("Пополнение счета на сумму: \(amount). Баланс \(name): \(balance)")
+            serialQueue.sync {
+                self.balance += amount
+                print("Пополнение счета на сумму: \(amount). Баланс \(self.name): \(self.balance)")
             }
         }
         
         func withdraw(amount: Double){
-            DispatchQueue.global().sync {
-                if balance >= amount {
-                    balance -= amount
-                    print("На счету \(name) осталось: \(balance)")
+            serialQueue.sync {
+                if self.balance >= amount {
+                    self.balance -= amount
+                    print("На счету \(self.name) осталось: \(self.balance)")
                 }
                 else {
-                    print("На счету \(name) недостаточно средств")
+                    print("На счету \(self.name) недостаточно средств")
                 }
             }
         }
@@ -69,11 +70,17 @@ class ViewController: UIViewController {
 //            self.transferFromTo(from: account, to: secondAccount, amount: 100)
 //        }
 //        thread.start()
-        account.deposit(amount: 100)
-        account.withdraw(amount: 120)
-        account.deposit(amount: 300)
-        account.withdraw(amount: 120)
-        transferFromTo(from: account, to: secondAccount, amount: 100)
+        DispatchQueue.concurrentPerform(iterations: 10) { i in
+            account.deposit(amount: 100)
+            account.withdraw(amount: 120)
+            account.deposit(amount: 300)
+            account.withdraw(amount: 120)
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            print(account.balance)
+        }
+//        transferFromTo(from: account, to: secondAccount, amount: 100)
     }
 
 
